@@ -12,7 +12,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "D-Chat",
+  title: { template: "%s | D-Chat", default: "D-Chat" },
   description: "Social media app for inhouse discussion",
 };
 
