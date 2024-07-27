@@ -1,8 +1,8 @@
 import React from "react";
 import Image from "next/image";
 
-import avatarPlaceholder from "@/assets/avatar-placeholder.png";
 import { cn } from "@/lib/utils";
+import avatarPlaceholder from "@/assets/avatar-placeholder.png";
 
 interface UserAvatar {
   size?: number;

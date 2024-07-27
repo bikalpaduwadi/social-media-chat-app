@@ -1,7 +1,8 @@
-import SearchInput from "@/components/SearchInput";
-import UserButton from "@/components/UserButton";
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+
+import UserButton from "@/components/UserButton";
+import SearchInput from "@/components/SearchInput";
 
 const Navbar = () => {
   return (
