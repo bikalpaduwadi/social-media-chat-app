@@ -1,14 +1,24 @@
-import Image from "next/image";
+import prisma from "@/lib/prisma";
+import Post from "@/components/posts/Post";
+import { postDataInclude } from "@/utils/prisma";
+import TrendSidebar from "@/components/TrendSidebar";
+import PostEditor from "@/components/posts/editor/PostEditor";
 
-export default function Home() {
+export default async function Home() {
+  const posts = await prisma.post.findMany({
+    include: postDataInclude,
+    orderBy: { createdAt: "desc" },
+  });
+
   return (
-    <main>
-      <div>
-        Main page Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quis
-        corrupti eveniet adipisci hic. Sit tempore facilis, architecto ducimus
-        repellendus nihil illo soluta nulla quae dolorem, ullam, ea eum. Nulla,
-        maxime.
+    <main className="flex w-full min-w-0 gap-5">
+      <div className="w-full min-w-0 space-y-5">
+        <PostEditor />
+        {posts.map((post) => (
+          <Post key={post.id} post={post} />
+        ))}
       </div>
+      <TrendSidebar />
     </main>
   );
 }
