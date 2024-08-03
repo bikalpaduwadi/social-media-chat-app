@@ -11,17 +11,26 @@ export async function GET(req: NextRequest) {
   try {
     const { user } = await validateRequest();
 
-    const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-
     if (!user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
+
     const posts = await prisma.post.findMany({
-      include: getPostDataInclude(user.id),
+      where: {
+        user: {
+          followers: {
+            some: {
+              followerId: user.id,
+            },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
       take: POST_PAGE_SIZE + 1,
       cursor: cursor ? { id: cursor } : undefined,
+      include: getPostDataInclude(user.id),
     });
 
     const nextCursor =

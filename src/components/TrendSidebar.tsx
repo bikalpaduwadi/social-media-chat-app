@@ -1,14 +1,14 @@
 import Link from "next/link";
-import prisma from "@/lib/prisma";
 import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
 import { unstable_cache } from "next/cache";
-import { validateRequest } from "@/utils/auth";
-import { userDataSelect } from "@/utils/prisma";
 
-import { Button } from "./ui/button";
+import prisma from "@/lib/prisma";
 import UserAvatar from "./UserAvatar";
+import FollowButton from "./FollowButton";
 import { formatNumber } from "@/utils/misc";
+import { validateRequest } from "@/utils/auth";
+import { getUserDataSelect } from "@/utils/prisma";
 
 const TrendSidebar = () => {
   return (
@@ -24,19 +24,24 @@ const TrendSidebar = () => {
 export default TrendSidebar;
 
 const WhoToFollow = async () => {
-  const { user } = await validateRequest();
+  const { user: loggedInUser } = await validateRequest();
 
-  if (!user) {
+  if (!loggedInUser) {
     return null;
   }
 
   const usersToFollow = await prisma.user.findMany({
     where: {
       NOT: {
-        id: user.id,
+        id: loggedInUser.id,
+      },
+      followers: {
+        none: {
+          followerId: loggedInUser.id,
+        },
       },
     },
-    select: userDataSelect,
+    select: getUserDataSelect(loggedInUser.id),
     take: 5,
   });
 
@@ -59,7 +64,15 @@ const WhoToFollow = async () => {
               </p>
             </div>
           </Link>
-          <Button>Follow</Button>
+          <FollowButton
+            userId={user.id}
+            initialState={{
+              followers: user._count.followers,
+              isFollowedByUser: !!user.followers.some(
+                (follower) => follower.followerId === loggedInUser.id,
+              ),
+            }}
+          />
         </div>
       ))}
     </div>

@@ -7,7 +7,10 @@ import { getPostDataInclude } from "@/utils/prisma";
 
 const POST_PAGE_SIZE = 5;
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params: { userId } }: { params: { userId: string } },
+) {
   try {
     const { user } = await validateRequest();
 
@@ -18,6 +21,7 @@ export async function GET(req: NextRequest) {
     }
 
     const posts = await prisma.post.findMany({
+      where: { userId },
       include: getPostDataInclude(user.id),
       orderBy: { createdAt: "desc" },
       take: POST_PAGE_SIZE + 1,
