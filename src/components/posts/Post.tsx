@@ -8,6 +8,8 @@ import { PostData } from "@/utils/prisma";
 import { formatRelativeDate } from "@/utils/date";
 import PostActionButton from "./PostActionButton";
 import { useSession } from "@/app/(main)/SessionProvider";
+import Linkify from "../Linkify";
+import UserTooltip from "../UserTooltip";
 
 interface PostProps {
   post: PostData;
@@ -25,12 +27,15 @@ const Post = (props: PostProps) => {
             <UserAvatar avatarUrl={post.user?.avatarUrl} />
           </Link>
           <div>
-            <Link
-              href={`/users/${post.user?.username}`}
-              className="block font-medium hover:underline"
-            >
-              {post.user?.displayName}
-            </Link>
+            <UserTooltip user={post.user!}>
+              <Link
+                href={`/users/${post.user?.username}`}
+                className="block font-medium hover:underline"
+              >
+                {post.user?.displayName}
+              </Link>
+            </UserTooltip>
+
             <Link
               href={`/posts/${post.id}`}
               className="block text-sm text-muted-foreground hover:underline"
@@ -46,7 +51,9 @@ const Post = (props: PostProps) => {
           />
         )}
       </div>
-      <div className="whitespace-pre-line break-words">{post.content}</div>
+      <Linkify>
+        <div className="whitespace-pre-line break-words">{post.content}</div>
+      </Linkify>
     </article>
   );
 };

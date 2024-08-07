@@ -5,13 +5,14 @@ import { formatDate } from "date-fns";
 import prisma from "@/lib/prisma";
 import UserPosts from "./UserPosts";
 import { notFound } from "next/navigation";
+import Linkify from "@/components/Linkify";
 import { FollowerInfo } from "@/types/user";
 import { formatNumber } from "@/utils/misc";
 import { validateRequest } from "@/utils/auth";
-import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
 import TrendSidebar from "@/components/TrendSidebar";
 import FollowButton from "@/components/FollowButton";
+import EditProfileButton from "./EditProfileButton";
 import FollowerCounts from "@/components/FollowerCounts";
 import { getUserDataSelect, UserData } from "@/utils/prisma";
 
@@ -124,7 +125,7 @@ const UserProfile = async (props: UserProfileProps) => {
           </div>
         </div>
         {user.id === loggedInUserId ? (
-          <Button>Edit profile</Button>
+          <EditProfileButton user={user} />
         ) : (
           <FollowButton userId={user.id} initialState={followerInfo} />
         )}
@@ -132,9 +133,11 @@ const UserProfile = async (props: UserProfileProps) => {
       {user.bio && (
         <>
           <hr />
-          <div className="overflow-hidden whitespace-pre-line break-words">
-            {user.bio}
-          </div>
+          <Linkify>
+            <div className="overflow-hidden whitespace-pre-line break-words">
+              {user.bio}
+            </div>
+          </Linkify>
         </>
       )}
     </div>
