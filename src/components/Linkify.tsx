@@ -28,7 +28,11 @@ const LinkifyUsername = ({ children }: { children: React.ReactNode }) => {
       component={(match, key) => {
         const username = match.slice(1);
 
-        return <UserLinkWithTooltip key={key} username={match.slice(1)} />;
+        return (
+          <UserLinkWithTooltip key={key} username={username}>
+            {match}
+          </UserLinkWithTooltip>
+        );
       }}
     >
       {children}
