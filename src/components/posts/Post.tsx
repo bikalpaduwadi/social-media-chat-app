@@ -2,14 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { Media } from "@prisma/client";
 
+import Linkify from "../Linkify";
+import { cn } from "@/lib/utils";
 import UserAvatar from "../UserAvatar";
+import UserTooltip from "../UserTooltip";
 import { PostData } from "@/utils/prisma";
 import { formatRelativeDate } from "@/utils/date";
 import PostActionButton from "./PostActionButton";
 import { useSession } from "@/app/(main)/SessionProvider";
-import Linkify from "../Linkify";
-import UserTooltip from "../UserTooltip";
 
 interface PostProps {
   post: PostData;
@@ -54,8 +57,62 @@ const Post = (props: PostProps) => {
       <Linkify>
         <div className="whitespace-pre-line break-words">{post.content}</div>
       </Linkify>
+      {!!post.attachments.length && (
+        <MediaPreviews attachments={post.attachments} />
+      )}
     </article>
   );
 };
 
 export default Post;
+
+interface MediaPreviewProps {
+  attachment: Media;
+}
+
+const MediaPreview = ({ attachment }: MediaPreviewProps) => {
+  if (attachment.type === "IMAGE") {
+    return (
+      <Image
+        src={attachment.url}
+        alt="Attachment"
+        width={500}
+        height={500}
+        className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+      />
+    );
+  }
+
+  if (attachment.type === "VIDEO") {
+    return (
+      <div>
+        <video
+          src={attachment.url}
+          controls
+          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+        />
+      </div>
+    );
+  }
+
+  return <p className="text-destructive">Unsupported media file</p>;
+};
+
+interface MediaPreviewsProps {
+  attachments: Media[];
+}
+
+const MediaPreviews = ({ attachments }: MediaPreviewsProps) => {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3",
+        attachments.length > 1 && "sm:grid sm:grid-cols-2",
+      )}
+    >
+      {attachments.map((attachment) => (
+        <MediaPreview key={attachment.id} attachment={attachment} />
+      ))}
+    </div>
+  );
+};
