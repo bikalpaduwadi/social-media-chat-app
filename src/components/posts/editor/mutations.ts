@@ -34,7 +34,6 @@ export const useCreatePostMutation = () => {
 
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
         queryFilter,
-        // @ts-ignore
         (oldData) => {
           const firstPage = oldData?.pages[0];
 
