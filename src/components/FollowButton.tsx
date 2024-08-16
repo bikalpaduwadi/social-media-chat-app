@@ -19,7 +19,6 @@ const FollowButton = ({ userId, initialState }: FollowButtonProps) => {
   const queryClient = useQueryClient();
   const queryKey: QueryKey = ["follower-info", userId];
 
-  console.log("initialState", initialState);
   const { data } = useFollowerInfo(userId, initialState);
   const { mutate } = useMutation({
     mutationFn: () =>

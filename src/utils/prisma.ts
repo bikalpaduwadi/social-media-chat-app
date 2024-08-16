@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { TypeOf } from "zod";
 
 // export const userDataSelect = {
 //   id: true,
@@ -81,4 +82,23 @@ export const getCommentDataInclude = (loggedInUserId: string) => {
 
 export type CommentData = Prisma.CommentGetPayload<{
   include: ReturnType<typeof getCommentDataInclude>;
+}>;
+
+export const notificationDataInclude = {
+  issuer: {
+    select: {
+      username: true,
+      displayName: true,
+      avatarUrl: true,
+    },
+  },
+  post: {
+    select: {
+      content: true,
+    },
+  },
+} satisfies Prisma.NotificationInclude;
+
+export type NotificationData = Prisma.NotificationGetPayload<{
+  include: typeof notificationDataInclude;
 }>;

@@ -78,14 +78,13 @@ export const useDeleteCommentMutation = () => {
 
       queryClient.setQueryData<InfiniteData<CommentsPage, string | null>>(
         queryKey,
-        // @ts-ignore
         (oldData) => {
           if (!oldData) {
             return;
           }
 
           return {
-            pageParams: oldData.pages,
+            pageParams: oldData.pageParams,
             pages: oldData.pages.map((page) => ({
               previousCursor: page.previousCursor,
               comments: page.comments.filter(
