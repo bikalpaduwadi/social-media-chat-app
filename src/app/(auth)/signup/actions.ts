@@ -8,6 +8,7 @@ import { isRedirectError } from "next/dist/client/components/redirect";
 
 import prisma from "@/lib/prisma";
 import { lucia } from "@/utils/auth";
+import streamServerClient from "@/lib/stream";
 import { SignUpValues, signUpSchema } from "@/utils/validator";
 
 export async function signup(
@@ -51,14 +52,22 @@ export async function signup(
       return { error: "Email already taken" };
     }
 
-    await prisma.user.create({
-      data: {
+    await prisma.$transaction(async (transaction) => {
+      await transaction.user.create({
+        data: {
+          id: userId,
+          username,
+          displayName: username,
+          email,
+          passwordHash,
+        },
+      });
+
+      await streamServerClient.upsertUser({
         id: userId,
         username,
-        displayName: username,
-        email,
-        passwordHash,
-      },
+        name: username,
+      });
     });
 
     const session = await lucia.createSession(userId, {});
