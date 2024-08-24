@@ -4,3 +4,10 @@ export const formatNumber = (value: number): string => {
     maximumFractionDigits: 1,
   }).format(value);
 };
+
+export const slugify = (input: string): string => {
+  return input
+    .toLocaleLowerCase()
+    .replace(/ /g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+};
